@@ -620,7 +620,6 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--s
 .who{font-family:var(--mono);font-size:9.5px;letter-spacing:0;text-transform:none;padding:0 5px;border:1px solid var(--ink-4);color:var(--ink-2);background:var(--surface)}
 .who.us{border-color:var(--accent);color:var(--accent-2);background:var(--accent-wash)}
 .lnb a{display:flex;align-items:baseline;gap:8px;padding:7px 14px;color:var(--ink);text-decoration:none;font-size:12.5px}
-.lnb a.us{box-shadow:inset 3px 0 0 var(--accent)}
 .lnb a:hover{background:var(--sunken)}
 .lnb a.on{background:var(--ink);color:var(--surface)}
 .lnb a small{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink-3);white-space:nowrap}

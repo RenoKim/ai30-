@@ -68,12 +68,12 @@ function Drawer({ open, pathname }: { open: boolean; pathname: string }) {
     <nav className={`lnb${open ? ' on' : ''}`} aria-label="화면 이동" aria-hidden={!open}>
       {GROUPS.map((g) => (
         <div key={g.key} className="lnb-g">
-          <h5>{g.title}<span className={`who ${g.owner}`}>{g.owner === 'us' ? '우리' : '조원'}</span></h5>
+          <h5>{g.title}</h5>
           {g.items.map((it) => {
             const on = it.href.split('?')[0] === pathname && !it.href.includes('?')
             const s = status(it.href)
             return (
-              <Link key={it.href} href={it.href} className={`${on ? 'on' : ''} ${g.owner}`} aria-current={on ? 'page' : undefined} tabIndex={open ? 0 : -1}>
+              <Link key={it.href} href={it.href} className={on ? 'on' : undefined} aria-current={on ? 'page' : undefined} tabIndex={open ? 0 : -1}>
                 <span>{it.label}</span>
                 <small>{s ?? it.hint}</small>
               </Link>

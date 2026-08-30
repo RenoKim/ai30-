@@ -171,7 +171,7 @@ export function Sec3({ d, myBid }: { d: CaseDetail; myBid: number | null }) {
           월 거래가 <b>{cmin}~{cmax}건</b>으로 얇아 월별 등락을 시세 흐름으로 읽으면 안 된다.
         </Read>
       </>}
-      <p className="dnote">합성 데이터 · 용도(연립/다세대)는 원본에 없어 실거래 면적대별 비중으로 생성했다. 실측이 아니다. 해제거래·직거래는 실거래 표본에서 뺐다. — 조원 원문 각주</p>
+      <p className="dnote">합성 데이터 · 용도(연립/다세대)는 원본에 없어 실거래 면적대별 비중으로 생성했다. 실측이 아니다. 해제거래·직거래는 실거래 표본에서 뺐다.</p>
     </section>
   )
 }

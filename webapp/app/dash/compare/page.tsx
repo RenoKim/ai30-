@@ -55,7 +55,7 @@ export default function ComparePage() {
           </table>
         </div>
         <Read>
-          낙찰가는 감정가가 아니라 <b>&lsquo;그 회차에 부르는 값&rsquo;</b>을 따라갑니다. 조원 DB의 화곡동·강서구·서울(+10.5~10.8%)에서도 같습니다.
+          낙찰가는 감정가가 아니라 <b>&lsquo;그 회차에 부르는 값&rsquo;</b>을 따라갑니다. 사건 조회 DB의 화곡동·강서구·서울(+10.5~10.8%)에서도 같습니다.
         </Read>
       </Sec>
 
