@@ -5,6 +5,7 @@ import { useUploads } from '@/lib/ggauction/store'
 import { MARKET, MARKET_PERIOD, HOUSING, SCOPE_LABEL, pick } from '@/lib/ggauction/marketData'
 import { EmptyGuide } from './ItemList'
 import { CountUp } from './CountUp'
+import { Sec, Callout, Read, Row, Cell } from './ui'
 
 const 억 = 100_000_000
 const money = (n: number) => (n <= 0 ? '—' : n >= 억 ? `${(n / 억).toFixed(1)}억` : `${Math.round(n / 10_000).toLocaleString('ko-KR')}만`)
@@ -107,59 +108,48 @@ export function Brief() {
       .sort((a, b) => b.bidDate.localeCompare(a.bidDate)),
     [rows, right],
   )
+  const int = (n: number) => Math.round(n).toLocaleString('ko-KR')
 
   return (
     <>
-      <p className="dcrumb">시장 / 경매시장 브리핑</p>
-      <h1>경매시장 브리핑</h1>
-      <p className="dlede">
-        <b>주택 4종</b>(연립/다세대 · 오피스텔(주거용) · 단독/다가구) 기준입니다.
-        아파트는 <b>거의 감정가에 팔리고 응찰자가 3배</b>라 다른 시장이어서 뺐습니다 — 섞으면 평균이 끌려갑니다.
-      </p>
-      <p className="dwhy">
-        <b>기간 주의</b> — 아래 집계는 <b>{MARKET_PERIOD} 1년치</b>입니다.
-        와이어프레임의 &lsquo;지난 1주·1달&rsquo;로 좁히려면 <b>월별 매각통계</b>가 있어야 합니다.
-        아직 못 받았습니다.
-      </p>
-
-      <div className="dcompare">
-        {([['seoul', seoul], ['hwagok', hwagok]] as const).map(([scope, t]) => (
-          <section key={scope} className={`dcard dcompare-card ${scope === 'hwagok' ? 'is-subject' : 'is-ref'}`}>
-            <h3>
-              {SCOPE_LABEL[scope]}
-              <span className="scope-tag">{scope === 'hwagok' ? '분석 대상' : '비교 기준'}</span>
-            </h3>
-            <div className="stat-row">
-              <div><span className="k">개찰 대상</span><span className="v"><CountUp value={t.listed} format={(n) => Math.round(n).toLocaleString('ko-KR')} /><em>건</em></span></div>
-              <div><span className="k">낙찰</span><span className="v"><CountUp value={t.sold} format={(n) => Math.round(n).toLocaleString('ko-KR')} /></span></div>
-              <div><span className="k">유찰</span><span className="v"><CountUp value={t.failed} format={(n) => Math.round(n).toLocaleString('ko-KR')} /></span></div>
-            </div>
-            <div className="stat-row">
-              <div><span className="k">낙찰률</span><span className="v"><CountUp value={t.soldRate} format={(n) => n.toFixed(2)} /><em>%</em></span>
-                {scope === 'hwagok'
-                  ? <Delta value={t.soldRate - seoul.soldRate} />
-                  : <span className="d">낙찰 ÷ 개찰</span>}</div>
-              <div><span className="k">낙찰가율</span><span className="v"><CountUp value={t.priceRate} format={(n) => n.toFixed(2)} /><em>%</em></span>
-                {scope === 'hwagok'
-                  ? <Delta value={t.priceRate - seoul.priceRate} />
-                  : <span className="d">낙찰가 ÷ 감정가</span>}</div>
-              <div><span className="k">평균 응찰</span><span className="v"><CountUp value={t.bidders} format={(n) => n.toFixed(2)} /><em>명</em></span>
-                {scope === 'hwagok' && <Delta value={t.bidders - seoul.bidders} unit="명" />}</div>
-            </div>
-            <SplitBar sold={t.sold} failed={t.failed} />
-          </section>
-        ))}
+      <div className="dhead">
+        <p className="dcrumb">시장 / 경매시장 브리핑</p>
+        <h1>경매시장 브리핑</h1>
+        <p className="dlede">
+          <b>주택 4종</b>(연립/다세대 · 오피스텔(주거용) · 단독/다가구) 기준입니다.
+          아파트는 <b>거의 감정가에 팔리고 응찰자가 3배</b>라 다른 시장이어서 뺐습니다 — 섞으면 평균이 끌려갑니다.
+        </p>
       </div>
 
-      <p className="concl">
-        화곡동은 낙찰률이 <Delta value={hwagok.soldRate - seoul.soldRate} /> 높은데
-        낙찰가율은 <Delta value={hwagok.priceRate - seoul.priceRate} /> 낮고 응찰자도 적습니다.
-        <b> 경쟁이 세서 잘 팔리는 게 아니라, 값이 충분히 내려가서 팔립니다.</b>
-      </p>
+      <Sec n="01" title="개찰 · 낙찰 · 유찰" sub={`${MARKET_PERIOD} · 서울 전체 vs 강서구 화곡동`}>
+        <Callout title="화곡동은 더 잘 팔리는데 더 싸게 팔립니다">
+          낙찰률 <Delta value={hwagok.soldRate - seoul.soldRate} /> · 낙찰가율 <Delta value={hwagok.priceRate - seoul.priceRate} /> ·
+          응찰자 <Delta value={hwagok.bidders - seoul.bidders} unit="명" />. 경쟁이 세서가 아니라 값이 충분히 내려가서 팔립니다.
+        </Callout>
+        <Row>
+          {([['seoul', seoul, false], ['hwagok', hwagok, true]] as const).map(([scope, t, keyed]) => (
+            <Cell key={scope} keyed={keyed}
+              label={<>{SCOPE_LABEL[scope]} · 개찰 대상 <span className="who">{keyed ? '분석 대상' : '비교 기준'}</span></>}
+              value={<CountUp value={t.listed} format={int} />} unit="건"
+              note={<>낙찰 {int(t.sold)} · 유찰 {int(t.failed)}</>}>
+              <SplitBar sold={t.sold} failed={t.failed} />
+            </Cell>
+          ))}
+        </Row>
+        <Row>
+          <Cell label="낙찰률 · 화곡동" value={<CountUp value={hwagok.soldRate} format={(n) => n.toFixed(2)} />} unit="%"
+            after={<Delta value={hwagok.soldRate - seoul.soldRate} />} note={<>서울 {seoul.soldRate.toFixed(2)}% · 낙찰 ÷ 개찰</>} />
+          <Cell label="낙찰가율 · 화곡동" value={<CountUp value={hwagok.priceRate} format={(n) => n.toFixed(2)} />} unit="%"
+            after={<Delta value={hwagok.priceRate - seoul.priceRate} />} note={<>서울 {seoul.priceRate.toFixed(2)}% · 낙찰가 ÷ 감정가</>} />
+          <Cell label="평균 응찰 · 화곡동" value={<CountUp value={hwagok.bidders} format={(n) => n.toFixed(2)} />} unit="명"
+            after={<Delta value={hwagok.bidders - seoul.bidders} unit="명" />} note={<>서울 {seoul.bidders.toFixed(2)}명</>} />
+        </Row>
+        <Read title="기간 주의">
+          위 집계는 <b>{MARKET_PERIOD} 1년치</b>입니다. &lsquo;지난 1주·1달&rsquo;로 좁히려면 <b>월별 매각통계</b>가 있어야 합니다. 아직 못 받았습니다.
+        </Read>
+      </Sec>
 
-      <section className="dcard">
-        <h3>용도별 낙찰 현황</h3>
-        <p className="dsub">{MARKET_PERIOD} · 서울 전체 vs 강서구 화곡동</p>
+      <Sec n="02" title="용도별 낙찰 현황" sub="주택 4종 · 아파트는 참고">
         <div className="scroll">
           <table>
             <thead>
@@ -174,8 +164,8 @@ export function Brief() {
                 const s = pick('seoul', u); const h = pick('hwagok', u)
                 if (!s) return null
                 return (
-                  <tr key={u}>
-                    <td><b>{u}</b></td>
+                  <tr key={u} className={u === '연립/다세대' ? 'now' : undefined}>
+                    <td>{u}</td>
                     <td className="num">{s.listed.toLocaleString('ko-KR')}</td>
                     <BarCell value={s.soldRate} max={maxSoldRate} />
                     <BarCell value={s.priceRate} max={maxPriceRate} />
@@ -185,26 +175,24 @@ export function Brief() {
                   </tr>
                 )
               })}
-              <tr>
-                <td className="dsub">아파트 (참고 · 대상 아님)</td>
-                <td className="num dsub">{pick('seoul', '아파트')?.listed}</td>
-                <td className="num dsub">{pick('seoul', '아파트')?.soldRate}%</td>
-                <td className="num dsub">{pick('seoul', '아파트')?.priceRate}%</td>
-                <td className="num dsub">{pick('hwagok', '아파트')?.listed}</td>
-                <td className="num dsub">{pick('hwagok', '아파트')?.soldRate}%</td>
-                <td className="num dsub">{pick('hwagok', '아파트')?.priceRate}%</td>
+              <tr className="dim">
+                <td>아파트 (참고 · 대상 아님)</td>
+                <td className="num">{pick('seoul', '아파트')?.listed.toLocaleString('ko-KR')}</td>
+                <td className="num">{pick('seoul', '아파트')?.soldRate}%</td>
+                <td className="num">{pick('seoul', '아파트')?.priceRate}%</td>
+                <td className="num">{pick('hwagok', '아파트')?.listed}</td>
+                <td className="num">{pick('hwagok', '아파트')?.soldRate}%</td>
+                <td className="num">{pick('hwagok', '아파트')?.priceRate}%</td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p className="dnote">
-          서울 아파트는 낙찰가율이 <b>97.57%</b>입니다 — 거의 감정가 그대로 팔립니다.
-          주택 4종(72~75%)과 20%p 이상 벌어집니다.
-        </p>
-      </section>
+        <Read>
+          <b>서울 아파트는 낙찰가율이 97.57%</b> — 거의 감정가 그대로 팔립니다. 주택 4종(72~75%)과 20%p 넘게 벌어져 섞으면 평균이 끌려갑니다. 그래서 뺐습니다.
+        </Read>
+      </Sec>
 
-      <section className="dcard">
-        <h3>올린 목록의 낙찰 물건</h3>
+      <Sec n="03" title="올린 목록의 낙찰 물건" sub={isEmpty ? undefined : `${listed.length}건`}>
         {isEmpty ? <EmptyGuide what="여기에 이번 회차 물건이 나옵니다." /> : (
           <>
             <div className="dfilters">
@@ -214,7 +202,6 @@ export function Brief() {
                   {rightOptions.map((o) => <option key={o}>{o}</option>)}
                 </select>
               </label>
-              <span className="dfilters-n">{listed.length}건</span>
             </div>
             <div className="scroll">
               <table className="dtable">
@@ -243,7 +230,7 @@ export function Brief() {
             {listed.length > 25 && <p className="dnote">앞 25건 · 전체 {listed.length}건</p>}
           </>
         )}
-      </section>
+      </Sec>
     </>
   )
 }

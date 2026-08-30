@@ -4,6 +4,7 @@ import { useMemo, useState } from 'react'
 import Link from 'next/link'
 import { useUploads } from '@/lib/ggauction/store'
 import type { CaseRow } from '@/lib/ggauction/types'
+import { Sec, Read } from './ui'
 
 const won = (n: number) => n.toLocaleString('ko-KR')
 const 억 = 100_000_000
@@ -47,76 +48,77 @@ export function ItemList() {
 
   return (
     <>
-      <p className="dcrumb">목록 / 물건 목록</p>
-      <h1>물건 목록</h1>
-      {isEmpty ? <EmptyGuide what="여기에 물건이 하나씩 나옵니다." /> : (
+      <div className="dhead">
+        <p className="dcrumb">목록 / 물건 목록</p>
+        <h1>물건 목록</h1>
+        {isEmpty
+          ? <EmptyGuide what="여기에 물건이 하나씩 나옵니다." />
+          : <p className="dlede">읽어온 값과 계산한 값을 함께 봅니다. <b>회색 칸이 우리가 계산해 만든 값</b>입니다.</p>}
+      </div>
+      {!isEmpty && (
         <>
-          <p className="dlede">
-            읽어온 값과 계산한 값을 함께 봅니다. <b>회색 칸이 우리가 계산해 만든 값</b>입니다.
-          </p>
-
-          <div className="dfilters">
-            {([['지역', district, setDistrict, options.districts],
-               ['용도', usage, setUsage, options.usages],
-               ['회차', round, setRound, options.rounds],
-               ['상태', status, setStatus, options.statuses]] as const).map(([label, val, set, opts]) => (
-              <label key={label}>
-                <span>{label}</span>
-                <select value={val} onChange={(e) => set(e.target.value)}>
-                  {opts.map((o) => <option key={o}>{o}</option>)}
-                </select>
-              </label>
-            ))}
-            <span className="dfilters-n">{shown.length}건 / 전체 {rows.length}건</span>
-          </div>
-
-          <div className="scroll">
-            <table className="dtable">
-              <thead>
-                <tr>
-                  <th>매각기일</th><th>용도</th><th>지역</th><th>특수권리</th>
-                  <th className="num">건물㎡</th>
-                  <th className="num">감정가</th><th className="num">최저가</th><th className="num">낙찰가</th>
-                  <th className="num">응찰</th><th>상태</th>
-                  <th className="num calc">회차</th><th className="num calc">낙찰가율</th>
-                  <th className="num calc">프리미엄</th><th className="num calc">평당가</th>
-                </tr>
-              </thead>
-              <tbody>
-                {shown.slice(0, 120).map((r) => (
-                  <tr key={`${r.caseNo}-${r.bidDate}`} className={picked?.caseNo === r.caseNo ? 'on' : undefined}
-                      onClick={() => setPicked(r)}>
-                    <td className="dmono">{r.bidDate.slice(5)}</td>
-                    <td>{r.usageName ?? '-'}</td>
-                    <td>{r.district ?? '-'}</td>
-                    <td className="dtags">{r.rights.slice(0, 2).map((t) => <span key={t}>{t}</span>)}
-                      {r.rights.length > 2 && <span>+{r.rights.length - 2}</span>}</td>
-                    <td className="num">{r.bldgM2 ?? '-'}</td>
-                    <td className="num">{money(r.appraisalWon)}</td>
-                    <td className="num">{money(r.minBidWon)}</td>
-                    <td className="num">{money(r.winningWon)}</td>
-                    <td className="num">{r.bidders || '-'}</td>
-                    <td><span className={`sev ${r.status === '매각' ? 's-pass' : 's-fail'}`}>{r.status}</span></td>
-                    <td className="num calc">{r.roundNo ?? '제외'}</td>
-                    <td className="num calc">{r.rateVsAppraisal !== null ? `${r.rateVsAppraisal}%` : '-'}</td>
-                    <td className="num calc">{r.rateVsMinBid !== null ? `${r.rateVsMinBid}%` : '-'}</td>
-                    <td className="num calc">{r.pyeongPriceApprox ? Math.round(r.pyeongPriceApprox / 10_000).toLocaleString('ko-KR') : '-'}</td>
+          <Sec n="01" title="물건" sub={`${shown.length}건 / 전체 ${rows.length}건`}>
+            <div className="dfilters">
+              {([['지역', district, setDistrict, options.districts],
+                 ['용도', usage, setUsage, options.usages],
+                 ['회차', round, setRound, options.rounds],
+                 ['상태', status, setStatus, options.statuses]] as const).map(([label, val, set, opts]) => (
+                <label key={label}>
+                  <span>{label}</span>
+                  <select value={val} onChange={(e) => set(e.target.value)}>
+                    {opts.map((o) => <option key={o}>{o}</option>)}
+                  </select>
+                </label>
+              ))}
+            </div>
+            <div className="scroll">
+              <table className="dtable">
+                <thead>
+                  <tr>
+                    <th>매각기일</th><th>용도</th><th>지역</th><th>특수권리</th>
+                    <th className="num">건물㎡</th>
+                    <th className="num">감정가</th><th className="num">최저가</th><th className="num">낙찰가</th>
+                    <th className="num">응찰</th><th>상태</th>
+                    <th className="num calc">회차</th><th className="num calc">낙찰가율</th>
+                    <th className="num calc">프리미엄</th><th className="num calc">평당가</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          {shown.length > 120 && <p className="dnote">앞 120건만 보여줍니다 · 조건에 맞는 건 {shown.length}건</p>}
+                </thead>
+                <tbody>
+                  {shown.slice(0, 120).map((r) => (
+                    <tr key={`${r.caseNo}-${r.bidDate}`} className={picked?.caseNo === r.caseNo ? 'now' : undefined}
+                        onClick={() => setPicked(r)}>
+                      <td className="dmono">{r.bidDate.slice(5)}</td>
+                      <td>{r.usageName ?? '-'}</td>
+                      <td>{r.district ?? '-'}</td>
+                      <td className="dtags">{r.rights.slice(0, 2).map((t) => <span key={t}>{t}</span>)}
+                        {r.rights.length > 2 && <span>+{r.rights.length - 2}</span>}</td>
+                      <td className="num">{r.bldgM2 ?? '-'}</td>
+                      <td className="num">{money(r.appraisalWon)}</td>
+                      <td className="num">{money(r.minBidWon)}</td>
+                      <td className="num">{money(r.winningWon)}</td>
+                      <td className="num">{r.bidders || '-'}</td>
+                      <td><span className={`badge ${r.status === '매각' ? 'is-sold' : ''}`}>{r.status}</span></td>
+                      <td className="num calc">{r.roundNo ?? '제외'}</td>
+                      <td className="num calc">{r.rateVsAppraisal !== null ? `${r.rateVsAppraisal}%` : '-'}</td>
+                      <td className="num calc">{r.rateVsMinBid !== null ? `${r.rateVsMinBid}%` : '-'}</td>
+                      <td className="num calc">{r.pyeongPriceApprox ? Math.round(r.pyeongPriceApprox / 10_000).toLocaleString('ko-KR') : '-'}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            {shown.length > 120 && <p className="dnote">앞 120건만 보여줍니다 · 조건에 맞는 건 {shown.length}건</p>}
+            {!picked && <p className="dnote">행을 누르면 아래에 그 물건이 펼쳐집니다.</p>}
+          </Sec>
 
           {picked && (
-            <section className="dcard">
-              <h3>{picked.caseNo} <span className="dsub">· {picked.usageName} · {picked.district}</span></h3>
+            <Sec n="02" title={<>{picked.caseNo}</>} sub={`${picked.usageName} · ${picked.district}`}>
               <div className="scroll">
                 <table>
                   <tbody>
                     <tr><th>매각기일 · 법원</th><td>{picked.bidDate} · {picked.court}</td></tr>
                     <tr><th>감정가 → 최저가 → 낙찰가</th>
-                      <td>{won(picked.appraisalWon)} → {won(picked.minBidWon)} → {picked.winningWon ? won(picked.winningWon) : '—'}</td></tr>
+                      <td className="num" style={{ textAlign: 'left' }}>{won(picked.appraisalWon)} → {won(picked.minBidWon)} → {picked.winningWon ? won(picked.winningWon) : '—'}</td></tr>
                     <tr><th>면적</th><td>건물 {picked.bldgM2 ?? '-'}㎡ · 토지 {picked.landM2 ?? '-'}㎡</td></tr>
                     <tr><th>특수권리</th><td>{picked.rights.length ? picked.rights.join(' · ') : '없음'}</td></tr>
                     <tr className="calc"><th>계산값</th>
@@ -125,10 +127,12 @@ export function ItemList() {
                   </tbody>
                 </table>
               </div>
-              <p className="dnote">
+              <Read>
                 <Link href={`/dash/bid?case=${encodeURIComponent(picked.caseNo)}`}>이 물건으로 입찰가 검토하기 →</Link>
-              </p>
-            </section>
+                {' · '}
+                <Link href={`/dash/case`}>사건번호로 다시 보기 →</Link>
+              </Read>
+            </Sec>
           )}
         </>
       )}
