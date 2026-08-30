@@ -896,3 +896,10 @@ tbody tr:nth-child(4){animation-delay:.48s}
   }
   .dcompare-card{transition:none}
 }
+
+/* ── 사건 조회(조원 화면 iframe) ────────────────── */
+/* 안의 앱이 1180px 셸이라 본문 폭 제한(1080)을 풀어야 데스크톱 배치가 나온다 */
+.dmain:has(.dframe){max-width:none}
+.dframe{width:100%;min-height:calc(100vh - 52px - 150px);height:1400px;border:1px solid var(--rule);
+  background:var(--surface);display:block}
+@media(max-width:720px){.dframe{height:1100px}}

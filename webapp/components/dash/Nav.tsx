@@ -26,6 +26,7 @@ const GROUPS = [
     items: [
       { href: '/dash/list', label: '물건 목록', hint: '읽은 값과 계산값' },
       { href: '/dash/bid', label: '입찰가 검토', hint: '얼마를 쓸 것인가' },
+      { href: '/dash/case', label: '사건 조회', hint: '사건번호로 한 건' },
     ],
   },
 ] as const
