@@ -72,7 +72,7 @@ export function CaseLookup() {
     setHint({ text: <>{items.length > 1 ? `물건 ${items.length}개 · ` : ''}<b>{r.sigungu} {r.eupmyeondong}</b> · 전용 {r.area}㎡ · 감정가 {eok(r.appraisal)}억</> })
   }, [items, item])
 
-  const start = useCallback(async (c = court, cn = caseInput, it = item) => {
+  const start = useCallback(async (c = court, cn = caseInput, it = item, keepBid = false) => {
     if (!cn.trim()) { setHint({ text: '사건번호를 입력해주세요.', tone: 'err' }); return }
     if (!normCase(cn)) { setHint({ text: '사건번호 형식을 확인해주세요. 2023타경115918 또는 2023-115918', tone: 'err' }); return }
     if (!it) { setHint({ text: '물건번호를 선택해주세요. 사건번호를 먼저 조회해야 목록이 나옵니다.', tone: 'err' }); return }
@@ -81,7 +81,8 @@ export function CaseLookup() {
     try {
       const d = await getCaseDetail(c, cn.trim(), it)
       if (!d?.found) { setHint({ text: '해당 물건을 찾을 수 없어요.', tone: 'err' }); return }
-      setDetail(d); setStep(1); setMyBid(null); setBidText('')
+      setDetail(d); setStep(1)
+      if (!keepBid) { setMyBid(null); setBidText('') }   // 저장 목록에서 불러올 땐 내 입찰가를 살린다
       setHint({ text: '사건번호를 입력하면 물건 목록을 불러옵니다.' })
       setToast('사건 조회가 완료되었어요.')
       router.replace('/dash/case')
@@ -121,7 +122,7 @@ export function CaseLookup() {
   const loadSaved = (r: SavedCase) => {
     setCourt(r.court); setCaseInput(fmtCase(r.case_no)); setItem(r.item_no)
     if (r.my_bid) { setMyBid(r.my_bid); setBidText(nf(r.my_bid)) }
-    void start(r.court, fmtCase(r.case_no), r.item_no)
+    void start(r.court, fmtCase(r.case_no), r.item_no, Boolean(r.my_bid))
   }
 
   const applyBid = () => {
