@@ -20,7 +20,7 @@ webapp/                 Next.js 15 · React 19 · TypeScript
   lib/dash/shell.ts     서랍(LNB)과 진행 레일이 읽는 정보구조 한 표
   lib/ggauction/        PDF 파서(pdf.js) · 심어둔 시장 집계 · 업로드 상태
   lib/report.ts         보고서 — Supabase 뷰 조립
-  public/case/          조원 「경매어려워」 원본 HTML (수정 없음 · 같은 출처 iframe)
+  lib/case/ · components/case/   조원 「경매어려워」 사건 조회 — React 포팅 (RPC 3개 · 차트 6개 · 저장 목록)
 ```
 
 ### 실행
