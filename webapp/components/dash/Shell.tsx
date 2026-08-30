@@ -16,7 +16,7 @@ export function Shell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname()
   const [open, setOpen] = useState(false)
   const here = locate(pathname)
-  const isWide = here?.group.key === 'case'
+  const isWide = here?.group.key === 'case' || here?.group.key === 'report'
 
   // 경로가 바뀌면 서랍은 닫힌다
   useEffect(() => { setOpen(false) }, [pathname])

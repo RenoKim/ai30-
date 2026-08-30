@@ -54,7 +54,7 @@ export const GROUPS: readonly ShellGroup[] = [
   {
     key: 'report', title: '보고서', owner: 'us',
     items: [
-      { href: '/report', label: '공매 분석 보고서', hint: '온비드 13년' },
+      { href: '/dash/report', label: '공매 분석 보고서', hint: '온비드 13년' },
     ],
   },
 ] as const

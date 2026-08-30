@@ -1127,3 +1127,17 @@ tbody tr:nth-child(4){animation-delay:.48s}
 .mybid small{font-family:var(--mono);font-size:10px;color:var(--accent-2)}
 .rnb-acts{display:flex;flex-direction:column;gap:6px;padding:10px 12px;border-top:1px solid var(--rule)}
 .rnb-acts .bt{appearance:none;font:inherit;font-family:var(--mono);font-size:11px;cursor:pointer;padding:8px 0}
+
+/* ── 공매 보고서가 셸 안으로 들어왔다 — 보고서의 활자 크기·산점도 라벨은 제 것을 되찾는다 ── */
+.dash .report{font-size:16px;line-height:1.7;background:var(--surface);border-left:1px solid var(--rule-2);border-right:1px solid var(--rule-2);
+  --ground:#F4F4F2;--sunken:#EAEAE6;--rule:#DFDED8;--rule-2:#C6C4BC;--accent:#0B6B61;--accent-wash:#E2F0EC;--s1:#0D9488;--s2:#C2410C;
+  --ok:#1F6B4E;--ok-wash:#E4F0E9;--crit:#A33227;--crit-wash:#F8E7E3;--warn:#8A6412;--warn-wash:#F7EEDA}
+.dash .report h1{font-size:clamp(31px,4.6vw,52px);line-height:1.1;letter-spacing:-.032em;font-weight:800}
+.dash .report h3{font-family:inherit;font-size:15px;font-weight:700}
+.dash .report .lbl{position:absolute;height:15px;line-height:15px}
+.dash .report th,.dash .report td{border:0;border-bottom:1px solid var(--rule);padding:11px 16px 11px 0;text-align:left;font-family:inherit}
+.dash .report thead th{background:none;font-family:inherit;font-size:11px;letter-spacing:.08em}
+.dash .report th.num,.dash .report td.num{text-align:right;font-family:ui-monospace,Menlo,monospace}
+.dash .report .scroll{border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
+.dash .report .concl{border:0;border-top:2px solid var(--ink);background:none;padding:18px 0 0;font-size:16.5px}
+.dash .report .delta.is-up{color:var(--ok)}.dash .report .delta.is-down{color:var(--crit)}

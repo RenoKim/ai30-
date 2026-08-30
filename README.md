@@ -8,7 +8,7 @@ AI 데이터매니지먼트 과정 조별과제 · 조원 김재관 · 박유선
 | --- | --- | --- |
 | 경매 시장 대시보드 | https://onbid-screener.vercel.app | 지지옥션 매각기일 목록 PDF → 시장 브리핑 · 추이 · 물건 · 입찰가 검토 · **공매와 대보기** |
 | 사건 조회 | https://onbid-screener.vercel.app/dash/case | 사건번호 한 건 → 물건 확인 · 비교군과 경쟁 · 동네 실거래 (조원 「경매어려워」 편입) |
-| 공매 분석 보고서 | https://onbid-screener.vercel.app/report | 온비드 13년 공개통계 |
+| 공매 분석 보고서 | https://onbid-screener.vercel.app/dash/report | 온비드 13년 (셸 안) 공개통계 |
 
 > 대시보드(법원 경매)와 보고서(온비드 공매)는 **다른 제도**를 다룹니다. 숫자를 합치지 않습니다.
 
@@ -16,7 +16,7 @@ AI 데이터매니지먼트 과정 조별과제 · 조원 김재관 · 박유선
 
 ```
 webapp/                 Next.js 15 · React 19 · TypeScript
-  app/                  / → /dash/case · /dash/* 시장·목록 화면 · /report 공매 보고서
+  app/                  / → /dash/case · /dash/* 시장·사건·목록·보고서 전부 셸 안 · /report → /dash/report
   lib/dash/shell.ts     서랍(LNB)과 진행 레일이 읽는 정보구조 한 표
   lib/ggauction/        PDF 파서(pdf.js) · 심어둔 시장 집계 · 업로드 상태
   lib/report.ts         보고서 — Supabase 뷰 조립
