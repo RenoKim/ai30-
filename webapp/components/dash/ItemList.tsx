@@ -47,7 +47,7 @@ export function ItemList() {
 
   return (
     <>
-      <p className="dcrumb">물건 / 물건 목록</p>
+      <p className="dcrumb">목록 / 물건 목록</p>
       <h1>물건 목록</h1>
       {isEmpty ? <EmptyGuide what="여기에 물건이 하나씩 나옵니다." /> : (
         <>

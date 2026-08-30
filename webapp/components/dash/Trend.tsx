@@ -29,7 +29,7 @@ export function Trend() {
 
   return (
     <>
-      <p className="dcrumb">시장 보기 / 시장지표 추이</p>
+      <p className="dcrumb">시장 / 시장지표 추이</p>
       <h1>시장지표 추이</h1>
       <p className="dlede">
         낙찰가율이 내려갈 때 <b>실제로 유찰이 깊어진 것인지</b>를 같은 화면에서 봅니다.

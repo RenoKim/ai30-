@@ -73,7 +73,7 @@ export function Upload() {
 
   return (
     <>
-      <p className="dcrumb">데이터 / 목록 업로드</p>
+      <p className="dcrumb">목록 / 목록 업로드</p>
       <h1>목록 업로드</h1>
       <p className="dlede">
         지지옥션 <b>매각기일 목록 PDF</b> 를 올리면 표를 읽어 대시보드에 반영합니다.

@@ -16,7 +16,7 @@ export function CleanReport() {
   if (isEmpty) {
     return (
       <>
-        <p className="dcrumb">데이터 / 정제 리포트</p>
+        <p className="dcrumb">목록 / 정제 리포트</p>
         <h1>정제 리포트</h1>
         <p className="dlede">
           아직 올린 목록이 없습니다. <Link href="/dash">목록 업로드</Link>에서 PDF 를 먼저 올려 주세요.
@@ -34,7 +34,7 @@ export function CleanReport() {
 
   return (
     <>
-      <p className="dcrumb">데이터 / 정제 리포트</p>
+      <p className="dcrumb">목록 / 정제 리포트</p>
       <h1>정제 리포트</h1>
       <p className="dlede">
         자동으로 처리하지 않고 남겨 둔 행입니다. 통계에서 빼거나, 확인한 뒤 살릴 수 있습니다.

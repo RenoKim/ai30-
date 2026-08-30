@@ -47,7 +47,7 @@ export function BidReview() {
   if (isEmpty) {
     return (
       <>
-        <p className="dcrumb">물건 / 입찰가 검토</p>
+        <p className="dcrumb">목록 / 입찰가 검토</p>
         <h1>입찰가 검토</h1>
         <EmptyGuide what="고른 물건과 비슷한 조건의 낙찰가 분포를 보여 드립니다." />
       </>
@@ -70,7 +70,7 @@ export function BidReview() {
 
   return (
     <>
-      <p className="dcrumb">물건 / 입찰가 검토</p>
+      <p className="dcrumb">목록 / 입찰가 검토</p>
       <h1>입찰가 검토</h1>
       <p className="dlede">
         고른 물건과 <b>비슷한 조건에서 실제로 얼마에 낙찰됐는지</b> 보고 입찰가를 정합니다.

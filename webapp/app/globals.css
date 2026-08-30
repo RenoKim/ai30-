@@ -576,56 +576,110 @@ code{font-family:ui-monospace,Menlo,monospace;font-size:.88em;background:var(--s
    좌측 내비 + 본문. 모서리는 각, 색은 계열색 2개 + 상태색만.
    ══════════════════════════════════════════════════════════════ */
 
-.dash{min-height:100vh;display:flex;flex-direction:column;background:var(--ground)}
+/* ══════════════════════════════════════════════════════════════
+   대시보드 셸 — 경매어려워(조원)의 시각 언어를 그대로 쓴다.
+   검은 앱바 · 햄버거 서랍 · 830px 흰 지면 · 오른쪽 250px 진행 레일.
+   숫자는 mono, 해설은 sans, 강조는 보라 한 색. 좋다/나쁘다 색은 없다 — 높다/낮다만 있다.
+   조원 시스템은 단일 테마라 .dash 안에서는 토큰을 고정한다(다크 모드에서도 같은 얼굴).
+   ══════════════════════════════════════════════════════════════ */
+.dash{
+  --ground:#e9e9ea; --surface:#fff; --sunken:#f4f4f4; --sunken-2:#fafafa;
+  --ink:#1c1c1c; --ink-2:#565656; --ink-3:#8c8c8c; --ink-4:#b4b4b4;
+  --rule:#e2e2e2; --rule-2:#c9c9c9;
+  --accent:#723ceb; --accent-2:#5c2fc4; --accent-wash:#f1ecfc; --accent-line:#dccdfa;
+  --ok:#1c1c1c; --ok-wash:#f4f4f4;
+  --warn:#a8571b; --warn-wash:#fbf3ea;
+  --crit:#a83a2c; --crit-wash:#fbeeec;
+  --s1:#1c1c1c; --s2:#723ceb;
+  --shadow:none;
+  --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  min-height:100vh;background:var(--ground);color:var(--ink);font-size:13.5px;line-height:1.55;color-scheme:light
+}
+.dash ::selection{background:var(--accent-wash)}
 
-/* ── 상단 ─────────────────────────────────────── */
-.dtop{display:flex;align-items:center;gap:14px;padding:0 20px;height:52px;
-  background:var(--surface);border-bottom:1px solid var(--rule);flex-wrap:wrap}
-.dtop-brand{font-size:15px;font-weight:800;letter-spacing:-.02em;color:var(--ink);text-decoration:none}
-.dtop-tag{font-size:10.5px;font-weight:700;letter-spacing:.1em;padding:2px 7px;
-  background:var(--sunken);color:var(--ink-3)}
-.dtop-alt{margin-left:auto;font-size:12.5px;color:var(--ink-3);text-decoration:none}
-.dtop-alt:hover{color:var(--accent)}
+/* ── 앱바 ─────────────────────────────────────── */
+.appbar{position:sticky;top:0;z-index:30;height:44px;display:flex;align-items:center;gap:12px;padding:0 14px;
+  background:#1c1c1c;color:#fff;border-bottom:1px solid #000}
+.burger{appearance:none;width:26px;height:26px;border:1px solid #444;background:#2a2a2a;color:#ddd;
+  display:grid;place-items:center;font-size:13px;cursor:pointer;padding:0;line-height:1}
+.burger:hover,.burger:focus-visible{background:#383838;outline:none;border-color:#777}
+.appbar-brand{font-size:14.5px;font-weight:600;color:#fff;text-decoration:none;letter-spacing:-.01em}
+.appbar-sub{font-size:11px;color:#b4b4b4}
+.appbar-crumb{font-family:var(--mono);font-size:11px;color:#ddd;border:1px solid #444;padding:1px 7px}
+.appbar-r{margin-left:auto;font-family:var(--mono);font-size:10.5px;color:#b4b4b4}
+@media(max-width:640px){.appbar-r{display:none}}
 
-.dbody{display:grid;grid-template-columns:206px minmax(0,1fr);flex:1;align-items:start}
-@media(max-width:860px){.dbody{grid-template-columns:1fr}}
+/* ── 서랍(LNB) ────────────────────────────────── */
+.scrim{position:fixed;inset:44px 0 0 0;background:rgba(0,0,0,.35);opacity:0;pointer-events:none;transition:opacity .15s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+.lnb{position:fixed;top:44px;left:0;bottom:0;width:250px;background:var(--surface);border-right:1px solid var(--rule-2);
+  padding:8px 0 20px;overflow-y:auto;transform:translateX(-100%);transition:transform .18s;z-index:25}
+.lnb.on{transform:none}
+.lnb-g h5{margin:10px 14px 4px;font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;
+  color:var(--ink-3);font-weight:600;display:flex;align-items:center;gap:6px}
+.who{font-family:var(--mono);font-size:9.5px;letter-spacing:0;text-transform:none;padding:0 5px;border:1px solid var(--ink-4);color:var(--ink-2);background:var(--surface)}
+.who.us{border-color:var(--accent);color:var(--accent-2);background:var(--accent-wash)}
+.lnb a{display:flex;align-items:baseline;gap:8px;padding:7px 14px;color:var(--ink);text-decoration:none;font-size:12.5px}
+.lnb a.us{box-shadow:inset 3px 0 0 var(--accent)}
+.lnb a:hover{background:var(--sunken)}
+.lnb a.on{background:var(--ink);color:var(--surface)}
+.lnb a small{margin-left:auto;font-family:var(--mono);font-size:10px;color:var(--ink-3);white-space:nowrap}
+.lnb a.on small{color:#bbb}
+.lnb-foot{margin:18px 14px 0;padding-top:10px;border-top:1px solid var(--rule);font-family:var(--mono);font-size:10px;color:var(--ink-3)}
 
-/* ── 좌측 내비 ────────────────────────────────── */
-.dside{border-right:1px solid var(--rule);background:var(--surface);
-  min-height:calc(100vh - 52px);position:sticky;top:0}
-@media(max-width:860px){.dside{min-height:0;position:static;border-right:0;border-bottom:1px solid var(--rule)}}
-.dnav{padding:18px 0 24px;display:flex;flex-direction:column;gap:20px}
-.dnav-g h4{padding:0 16px 6px;font-size:10.5px;letter-spacing:.12em;color:var(--ink-3)}
-.dnav-g ul{list-style:none;margin:0;padding:0}
-.dnav a{display:grid;grid-template-columns:1fr auto;gap:0 8px;padding:8px 16px;
-  text-decoration:none;color:var(--ink-2);border-left:2px solid transparent}
-.dnav a:hover{background:var(--sunken);color:var(--ink)}
-.dnav a.on{background:var(--accent-wash);color:var(--ink);border-left-color:var(--accent)}
-.dnav-l{font-size:13.5px;font-weight:650}
-.dnav-h{grid-column:1;font-size:11px;color:var(--ink-3);line-height:1.4}
-.dnav-n{grid-row:1;align-self:center;font-size:11px;font-weight:750;
-  background:var(--warn-wash);color:var(--warn);padding:1px 6px}
-.dnav-foot{padding:0 16px;font-size:11.5px;color:var(--ink-3);border-top:1px solid var(--rule);
-  padding-top:14px;margin-top:4px}
+/* ── 지면 + 레일 ──────────────────────────────── */
+.dshell{max-width:1180px;margin:0 auto;display:flex;align-items:flex-start}
+.dmain{width:100%;max-width:830px;min-height:calc(100vh - 44px);background:var(--surface);
+  border-left:1px solid var(--rule-2);border-right:1px solid var(--rule-2);
+  padding:22px 20px 80px;display:flex;flex-direction:column;gap:16px}
+.dmain.wide{max-width:none;background:transparent;border:0;padding:0}
+@media(max-width:720px){.dmain{padding:18px 14px 60px}}
+.drail{width:250px;flex:none;padding:12px;position:sticky;top:56px}
+.rnb{border:1px solid var(--rule-2);background:var(--surface)}
+.rnb-hd{padding:8px 12px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:10px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3)}
+.stp{display:flex;gap:9px;padding:9px 12px;border-bottom:1px solid var(--sunken);color:var(--ink-3);text-decoration:none;line-height:1.3;font-size:12.5px}
+.stp:hover{background:var(--sunken-2)}
+.stp i{font-style:normal;flex:none;width:18px;height:18px;border-radius:50%;border:1px solid var(--ink-4);
+  font-family:var(--mono);font-size:10px;display:grid;place-items:center;color:var(--ink-3)}
+.stp small{display:block;font-size:10.5px;color:var(--ink-3)}
+.stp.on{color:var(--ink);background:var(--accent-wash);box-shadow:inset 3px 0 0 var(--accent)}
+.stp.on i{background:var(--accent);border-color:var(--accent);color:#fff}
+.stp.done{color:var(--ink-2)}
+.stp.done i{background:var(--ink);border-color:var(--ink);color:#fff}
+.rnb-nav{display:flex;gap:6px;padding:10px 12px;border-top:1px solid var(--rule)}
+.bt{flex:1;border:1px solid var(--rule-2);padding:7px 0;text-align:center;font-family:var(--mono);font-size:11px;
+  background:var(--surface);color:var(--ink);text-decoration:none}
+.bt:hover{background:var(--sunken)}
+.bt.k{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.bt.k:hover{background:#000}
+.bt.off{color:var(--ink-4);pointer-events:none}
+.rnb-foot{display:block;padding:9px 12px;border-top:1px solid var(--rule);font-size:11px;color:var(--ink-3);text-decoration:none;line-height:1.5}
+.rnb-foot b{color:var(--accent-2);font-family:var(--mono);font-weight:600}
+.rnb-foot:hover{background:var(--sunken-2)}
+@media(max-width:1000px){
+  .dshell{flex-direction:column}
+  .dmain{max-width:none;border-left:0;border-right:0}
+  .drail{width:100%;position:static;padding:0 0 20px}
+}
 
-/* ── 본문 ─────────────────────────────────────── */
-.dmain{padding:26px 28px 80px;max-width:1080px;display:flex;flex-direction:column;gap:18px}
-@media(max-width:720px){.dmain{padding:20px 16px 60px}}
-.dcrumb{font-size:11.5px;letter-spacing:.06em;color:var(--ink-3);margin:0}
-.dmain h1{font-size:clamp(22px,3vw,30px);line-height:1.2;letter-spacing:-.028em;font-weight:800;margin:0}
-.dmain h3{font-size:14.5px;font-weight:750;margin:0}
-.dmain h3.mt{margin-top:20px}
-.dlede{font-size:15px;color:var(--ink-2);max-width:76ch}
-.dsub{font-size:12.5px;color:var(--ink-3);max-width:80ch}
-.dnote{font-size:12.5px;color:var(--ink-3)}
-.dnote a,.dlede a{color:var(--accent)}
-.dwhy{font-size:13px;color:var(--ink-2);background:var(--sunken);padding:12px 14px;
-  border-left:2px solid var(--rule-2);max-width:82ch}
-.dmono{font-family:ui-monospace,Menlo,monospace;font-size:12.5px}
+/* ── 본문 타이포 — 조원의 .land / .sh 톤 ──────── */
+.dcrumb{font-family:var(--mono);font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-3);margin:0}
+.dmain h1{font-size:23px;line-height:1.3;letter-spacing:-.01em;font-weight:600;margin:0}
+.dmain h3{font-size:13.5px;font-weight:600;font-family:var(--mono);margin:0;letter-spacing:-.01em}
+.dmain h3.mt{margin-top:16px}
+.dlede{font-size:14px;color:var(--ink-2);max-width:60ch}
+.dsub{font-size:12px;color:var(--ink-3);max-width:80ch}
+.dnote{font-size:12px;color:var(--ink-3)}
+.dnote a,.dlede a,.dsub a{color:var(--accent-2)}
+.dwhy{font-size:12.5px;color:var(--ink-2);background:var(--sunken-2);padding:10px 12px;
+  border:1px solid var(--rule-2);border-left:3px solid var(--ink);max-width:82ch;line-height:1.65}
+.dmono{font-family:var(--mono);font-size:12px}
+.dash .num,.dash .concl b,.dash .stat-row b{font-family:var(--mono);font-variant-numeric:tabular-nums}
 
-.dcard{background:var(--surface);border:1px solid var(--rule);padding:18px 18px 20px;
-  display:flex;flex-direction:column;gap:10px}
-.dgrid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+/* 카드 = 조원의 .cell */
+.dcard{background:var(--surface);border:1px solid var(--rule-2);padding:10px 12px 12px;display:flex;flex-direction:column;gap:8px}
+.dgrid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:8px}
+.dash .concl{font-size:13.5px;border:1px solid var(--accent-line);border-left:3px solid var(--accent);background:var(--accent-wash);padding:10px 12px;max-width:none}
 
 /* ── 처리 단계 ────────────────────────────────── */
 .dsteps{list-style:none;margin:0;padding:0;display:grid;
@@ -903,3 +957,10 @@ tbody tr:nth-child(4){animation-delay:.48s}
 .dframe{width:100%;min-height:calc(100vh - 52px - 150px);height:1400px;border:1px solid var(--rule);
   background:var(--surface);display:block}
 @media(max-width:720px){.dframe{height:1100px}}
+
+/* ── 셸 통일 — 증감·상태색은 좋다/나쁘다를 뜻하지 않는다 ── */
+.dash .delta.is-up{color:var(--ink)}
+.dash .delta.is-down{color:var(--warn)}
+.dash .dcompare-card.is-subject{border-left:3px solid var(--accent)}
+.dash .dframe{border:0;height:calc(100vh - 44px);min-height:0;display:block}
+.dmain.wide{min-height:0}

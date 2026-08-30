@@ -110,7 +110,7 @@ export function Brief() {
 
   return (
     <>
-      <p className="dcrumb">시장 보기 / 경매시장 브리핑</p>
+      <p className="dcrumb">시장 / 경매시장 브리핑</p>
       <h1>경매시장 브리핑</h1>
       <p className="dlede">
         <b>주택 4종</b>(연립/다세대 · 오피스텔(주거용) · 단독/다가구) 기준입니다.

@@ -1,27 +1,16 @@
 import type { Metadata } from 'next'
-import Link from 'next/link'
 import { UploadProvider } from '@/lib/ggauction/store'
-import { Nav } from '@/components/dash/Nav'
+import { Shell } from '@/components/dash/Shell'
 
 export const metadata: Metadata = {
-  title: '경매 시장 대시보드',
-  description: '지지옥션 매각기일 목록을 올려 시장을 보고 입찰가를 정합니다.',
+  title: '경매어려워 · 서울 연립 · 다세대',
+  description: '시장을 보고, 물건 하나를 고르고, 목록으로 검산하고, 공매에 같은 자를 대 봅니다.',
 }
 
 export default function DashLayout({ children }: { children: React.ReactNode }) {
   return (
     <UploadProvider>
-      <div className="dash">
-        <header className="dtop">
-          <Link href="/dash" className="dtop-brand">경매 시장 대시보드</Link>
-          <span className="dtop-tag">서울 · 주택 4종</span>
-          <Link href="/" className="dtop-alt">공매 분석 보고서 →</Link>
-        </header>
-        <div className="dbody">
-          <aside className="dside"><Nav /></aside>
-          <main className="dmain">{children}</main>
-        </div>
-      </div>
+      <Shell>{children}</Shell>
     </UploadProvider>
   )
 }

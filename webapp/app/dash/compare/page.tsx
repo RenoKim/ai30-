@@ -3,7 +3,7 @@ import { ONBID, COURT_SNAPSHOT as C } from '@/lib/ggauction/onbidData'
 export default function ComparePage() {
   return (
     <>
-      <p className="dcrumb">시장 보기 / 공매와 대보기</p>
+      <p className="dcrumb">시장 / 공매와 대보기</p>
       <h1>다른 제도에서도 같은 자가 통하는가</h1>
       <p className="dlede">
         지금까지 본 것은 전부 <b>법원 경매</b>입니다. 규칙이 전혀 다른 <b>온비드 공매</b>에
