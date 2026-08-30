@@ -1,4 +1,5 @@
 import type { CaseRow, CaseStatus, FlagSpec, ParseResult, RowFlag } from './types'
+import { parseAddress } from './address'
 
 /**
  * 지지옥션 매각기일 목록 PDF 파서.
@@ -64,6 +65,8 @@ export const FLAG_SPECS: FlagSpec[] = [
     how: '유찰 · 변경 · 취하', action: '낙찰가율에서 제외 · 유찰 집계에는 포함' },
   { key: 'parseIncomplete', label: '표 인식 실패',
     how: '줄바꿈 · 병합 셀', action: '원문을 함께 보여주고 직접 확인' },
+  { key: 'addressMissing', label: '주소 인식 실패',
+    how: '법정동·지번을 못 읽음', action: '공공데이터(건축물대장·실거래) 결합에서 제외' },
 ]
 
 const stripNoise = (text: string) =>
@@ -141,12 +144,22 @@ function parseBlock(block: string): CaseRow {
   if (!bidDate || !court || !caseNo || !usageName || !appraisal || !minBid) {
     flags.push('parseIncomplete')
   }
+  // 주소 — 공공데이터로 가는 결합 키. 없으면 행을 버리지 않고 결합 대상에서만 뺀다
+  const addr = parseAddress(block)
+  if (!addr) flags.push('addressMissing')
 
   return {
     bidDate,
     court: court ?? '',
     caseNo: caseNo ?? '',
-    district: pick(/서울\s+(\S+구)\s/, block),
+    district: addr?.gu ?? pick(/서울\s+(\S+구)\s/, block),
+    dong: addr?.dong ?? null,
+    jibun: addr?.jibun ?? null,
+    jibunAll: addr?.jibunAll ?? [],
+    buildingName: addr?.buildingName ?? null,
+    floor: addr?.floor ?? null,
+    ho: addr?.ho ?? null,
+    roadAddr: addr?.roadAddr ?? null,
     usageName,
     status,
     appraisalWon: appraisal,

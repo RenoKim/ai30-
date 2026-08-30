@@ -11,6 +11,16 @@ export interface CaseRow {
   court: string              // 동부4계
   caseNo: string             // 2025-9318 · 2024-64502[8]
   district: string | null    // 강서구
+  /** 법정동 — '화곡동' · '금호동3가' */
+  dong: string | null
+  /** 대표 지번. 건축물대장·실거래로 가는 결합 키 */
+  jibun: string | null
+  /** 일괄매각이면 필지가 여럿 */
+  jibunAll: string[]
+  buildingName: string | null
+  floor: string | null       // '3' · '지하1'
+  ho: string | null
+  roadAddr: string | null
   usageName: string | null   // 다세대
   status: CaseStatus
   appraisalWon: number
@@ -43,6 +53,7 @@ export type RowFlag =
   | 'areaMissing'           // 면적 없음 — 평당가만 제외
   | 'noWinningPrice'        // 낙찰가 없음(유찰 등) — 낙찰가율 제외, 유찰 집계엔 포함
   | 'parseIncomplete'       // 필수 값 누락 — 사람이 직접 확인
+  | 'addressMissing'        // 법정동·지번을 못 읽음 — 공공데이터 결합 대상에서 빠진다
 
 export interface FlagSpec {
   key: RowFlag

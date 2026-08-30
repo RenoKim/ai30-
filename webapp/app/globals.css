@@ -1141,3 +1141,8 @@ tbody tr:nth-child(4){animation-delay:.48s}
 .dash .report .scroll{border-top:1px solid var(--ink);border-bottom:1px solid var(--rule)}
 .dash .report .concl{border:0;border-top:2px solid var(--ink);background:none;padding:18px 0 0;font-size:16.5px}
 .dash .report .delta.is-up{color:var(--ok)}.dash .report .delta.is-down{color:var(--crit)}
+
+/* 물건 목록의 소재지 열 — 지번을 굵게, 건물명은 흐리게 */
+.dash td.daddr{white-space:nowrap;font-size:12px}
+.dash td.daddr b{font-family:var(--mono);font-weight:600}
+.dash td.daddr em{font-style:normal;color:var(--ink-3);margin-left:5px}

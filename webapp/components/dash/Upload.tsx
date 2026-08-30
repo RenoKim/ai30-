@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useUploads } from '@/lib/ggauction/store'
 import { parseListing, DECAY } from '@/lib/ggauction/parse'
 import type { ParseResult } from '@/lib/ggauction/types'
-import { Sec, Read, Rounds } from './ui'
+import { Sec, Read, Rounds, Row, Cell } from './ui'
 
 /** 화면에 보여주는 처리 단계. 어디까지 갔는지 알 수 있어야 한다 */
 const STEPS = ['파일 읽기', '표 인식', '항목 매핑', '파생값 계산', '대시보드 반영'] as const
@@ -17,8 +17,8 @@ const LADDER = Array.from({ length: 6 }, (_, i) => ({
   pct: Math.round(100 * DECAY ** i * 10) / 10,
 }))
 
-const READ_FIELDS = ['매각기일', '용도', '주소', '특수권리', '건물면적', '토지면적',
-  '감정가', '최저가', '낙찰가', '응찰자 수', '매각상태']
+const READ_FIELDS = ['매각기일', '용도', '법정동', '지번', '건물명', '층', '호', '도로명주소',
+  '특수권리', '건물면적', '토지면적', '감정가', '최저가', '낙찰가', '응찰자 수', '매각상태']
 
 const DERIVED = [
   ['유찰 회차', '최저가 ÷ 감정가 → 저감률 20% 역산'],
@@ -73,6 +73,8 @@ export function Upload() {
   }, [add])
 
   const total = files.reduce((a, f) => a + f.total, 0)
+  // 공공데이터(건축물대장·실거래)는 법정동 + 지번으로 붙는다. 몇 건이 준비됐는지 먼저 보여준다
+  const withJibun = rows.filter((r) => r.jibun).length
 
   return (
     <>
@@ -197,7 +199,23 @@ export function Upload() {
         </div>
       </Sec>
 
-      <Sec n="04" title="유찰 회차 환산표" sub="624건 · 예외 0건">
+      {rows.length > 0 && (
+        <Sec n="04" title="공공데이터 결합 준비" sub={`${withJibun} / ${rows.length}건`}>
+          <Row>
+            <Cell keyed label="법정동 + 지번 확보" value={withJibun} unit="건"
+              note={<>전체 {rows.length}건의 {((withJibun / rows.length) * 100).toFixed(0)}%</>} />
+            <Cell label="층" value={rows.filter((r) => r.floor).length} unit="건" note="반지하·1층 판별" />
+            <Cell label="도로명주소" value={rows.filter((r) => r.roadAddr).length} unit="건" note="지오코딩용" />
+          </Row>
+          <Read title="이 값으로 무엇을 붙일 수 있나">
+            <b>법정동 + 지번</b>이 있으면 <b>건축물대장</b>(사용승인일 · 지상/지하 층수 · 구조 · 세대수)과
+            <b> 국토부 실거래</b>(매매 · 전월세)가 붙습니다. 화곡동 5건으로 시험한 결과 건축물대장은 <b>5/5 매칭</b>이었습니다.
+            {withJibun < rows.length && <> 주소를 못 읽은 <b>{rows.length - withJibun}건</b>은 결합에서 빠집니다 — 정제 리포트에서 원문을 확인하세요.</>}
+          </Read>
+        </Sec>
+      )}
+
+      <Sec n="05" title="유찰 회차 환산표" sub="624건 · 예외 0건">
         <Rounds items={LADDER.map((l) => ({
           round: `${l.round}회차 · 유찰 ${l.failed}회`,
           price: `${l.pct}%`,

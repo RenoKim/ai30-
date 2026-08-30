@@ -94,7 +94,7 @@ export function CleanReport() {
             <table>
               <thead>
                 <tr>
-                  <th>사건번호</th><th>용도</th><th>지역</th>
+                  <th>사건번호</th><th>용도</th><th>소재지</th>
                   <th className="num">감정가</th><th className="num">최저가</th>
                   <th className="num calc">비율</th><th className="num calc">회차</th>
                   <th>사유</th>
@@ -105,7 +105,7 @@ export function CleanReport() {
                   <tr key={`${r.caseNo}-${r.bidDate}`}>
                     <td className="dmono">{r.caseNo}</td>
                     <td>{r.usageName ?? '-'}</td>
-                    <td>{r.district ?? '-'}</td>
+                    <td>{r.dong ? `${r.district} ${r.dong} ${r.jibun}` : (r.district ?? '-')}</td>
                     <td className="num">{won(r.appraisalWon)}</td>
                     <td className="num">{won(r.minBidWon)}</td>
                     <td className="num calc">{r.minToAppraisalPct !== null ? `${r.minToAppraisalPct}%` : '-'}</td>

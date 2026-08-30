@@ -75,7 +75,7 @@ export function ItemList() {
               <table className="dtable">
                 <thead>
                   <tr>
-                    <th>매각기일</th><th>용도</th><th>지역</th><th>특수권리</th>
+                    <th>매각기일</th><th>용도</th><th>소재지</th><th>특수권리</th>
                     <th className="num">건물㎡</th>
                     <th className="num">감정가</th><th className="num">최저가</th><th className="num">낙찰가</th>
                     <th className="num">응찰</th><th>상태</th>
@@ -89,7 +89,12 @@ export function ItemList() {
                         onClick={() => setPicked(r)}>
                       <td className="dmono">{r.bidDate.slice(5)}</td>
                       <td>{r.usageName ?? '-'}</td>
-                      <td>{r.district ?? '-'}</td>
+                      <td className="daddr">
+                        {r.dong
+                          ? <>{r.district} {r.dong} <b>{r.jibun}</b>{r.floor && <span> · {r.floor}층</span>}{r.ho && <span> {r.ho}호</span>}
+                              {r.buildingName && <em>{r.buildingName}</em>}</>
+                          : (r.district ?? '-')}
+                      </td>
                       <td className="dtags">{r.rights.slice(0, 2).map((t) => <span key={t}>{t}</span>)}
                         {r.rights.length > 2 && <span>+{r.rights.length - 2}</span>}</td>
                       <td className="num">{r.bldgM2 ?? '-'}</td>
@@ -116,6 +121,13 @@ export function ItemList() {
               <div className="scroll">
                 <table>
                   <tbody>
+                    <tr><th>소재지</th>
+                      <td>{picked.dong
+                        ? <>서울 {picked.district} {picked.dong} <b>{picked.jibunAll.join(', ')}</b>
+                            {picked.buildingName && <> · {picked.buildingName}</>}
+                            {picked.floor && <> {picked.floor}층</>}{picked.ho && <> {picked.ho}호</>}
+                            {picked.roadAddr && <div className="dnote">[{picked.roadAddr}]</div>}</>
+                        : <span className="dnote">주소를 읽지 못했습니다 — 공공데이터 결합 대상에서 빠집니다</span>}</td></tr>
                     <tr><th>매각기일 · 법원</th><td>{picked.bidDate} · {picked.court}</td></tr>
                     <tr><th>감정가 → 최저가 → 낙찰가</th>
                       <td className="num" style={{ textAlign: 'left' }}>{won(picked.appraisalWon)} → {won(picked.minBidWon)} → {picked.winningWon ? won(picked.winningWon) : '—'}</td></tr>
