@@ -8,6 +8,18 @@ import { Sec1, Sec2, Sec3 } from './CaseDetail'
 import { SavedCases } from './SavedCases'
 
 const DEFAULT_COURT = '서울남부지방법원'
+
+/**
+ * 표본 사건 — 시연·검증용. 조원 최종본이 안내판으로 띄운 5건을 그대로 쓰되,
+ * 우리는 **누르면 바로 조회**되게 한다.
+ */
+const SAMPLES = [
+  { caseNo: '2025-11261', item: '1', loc: '강서구 화곡동', spec: '26.86㎡ · 2.79억', tag: null },
+  { caseNo: '2025-10585', item: '1', loc: '금천구 독산동', spec: '29.84㎡ · 2.84억', tag: null },
+  { caseNo: '2025-11132', item: '1', loc: '양천구 신월동', spec: '29.95㎡ · 2.64억', tag: null },
+  { caseNo: '2025-8585',  item: '1', loc: '강서구 화곡동', spec: '29.88㎡ · 2.92억', tag: '불허' },
+  { caseNo: '2024-131962', item: '1', loc: '강서구 화곡동', spec: '29.91㎡ · 2.65억', tag: '7회차' },
+] as const
 const STEPS = [
   ['물건 지정', '사건번호 · 물건번호'], ['물건 확인', '최저가 · 기일 · 면적'],
   ['비교군과 경쟁', '매각률 · 낙찰가 · 응찰자'], ['이 동네 실거래', '거래 분포 · 평당가'],
@@ -161,7 +173,22 @@ export function CaseLookup() {
               <button type="submit" className="btn" disabled={busy}>{busy ? '만드는 중…' : 'START'}</button>
               <p className="cut">기준일 <b>{ASOF}</b> · 이 날짜 이후 정보는 표시하지 않는다</p>
             </form>
-            <p className="foot">경매 6,975물건 / 32,726기일 · 서울 5개 지방법원<br />실거래 105,045건 · 국토교통부 연립다세대 매매 (2023-01 ~)<br />번지가 없어 개별 물건 단위 시세 조회는 불가하며, 같은 동 · 같은 면적대 거래 기록으로만 비교한다.</p>
+            <div className="samples">
+              <div className="samples-hd"><span className="lbl">표본 사건</span><small>서울남부지방법원</small></div>
+              <ul>
+                {SAMPLES.map((x) => (
+                  <li key={x.caseNo}>
+                    <button type="button" onClick={() => { setCaseInput(x.caseNo); setItem(x.item); void start(DEFAULT_COURT, x.caseNo, x.item) }}>
+                      <b>{x.caseNo}</b><em>물건 {x.item}</em>
+                      {x.tag && <span className="tag">{x.tag}</span>}
+                      <s>{x.loc} · {x.spec}</s>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+              <p className="dnote">눌러서 바로 열거나, 위 입력창에 사건번호를 직접 넣으세요.</p>
+            </div>
+            <p className="foot">경매 6,986물건 / 32,726기일 · 서울 5개 지방법원<br />실거래 105,045건 · 국토교통부 연립다세대 매매 (2023-01 ~)<br />번지가 없어 개별 물건 단위 시세 조회는 불가하며, 같은 동 · 같은 면적대 거래 기록으로만 비교한다.</p>
           </div>
         ) : (
           <>

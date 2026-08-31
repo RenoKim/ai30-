@@ -20,6 +20,19 @@ function Pair({ chart, label, lines }: { chart: React.ReactNode; label: string; 
   )
 }
 
+const BIDN: Record<number, string> = { 1: '1명', 2: '2명', 3: '3명', 4: '4~6명', 7: '7명 이상' }
+
+/** 가장 흔한 응찰자 구간을 문장으로. 조원 화면과 같은 문구를 쓴다 */
+function bidLine(bd: { g: number; n: number }[]): string {
+  const top = bd.slice().sort((a, b) => b.n - a.n)[0]
+  if (!top) return '응찰자 기록이 없습니다'
+  const tot = bd.reduce((a, b) => a + b.n, 0) || 1
+  const pct = Math.round(top.n / tot * 100)
+  return top.g === 1
+    ? `비슷한 물건은 단독 응찰로 낙찰된 경우가 가장 많았습니다 — ${pct}%`
+    : `비슷한 물건은 응찰자가 ${BIDN[top.g]}인 경우가 가장 많았습니다 — ${pct}%`
+}
+
 const NoData = ({ title, msg }: { title: string; msg: string }) => (
   <>
     <Callout title={title}>{msg}</Callout>
@@ -31,11 +44,49 @@ const FewWarn = ({ n }: { n: number }) => n < 30
   ? <Read tone="warn" title="표본 부족">비교 대상이 <b>{n}건</b>뿐이라 아래 수치는 크게 흔들릴 수 있어요. 참고용으로만 보세요.</Read>
   : null
 
+/**
+ * 이 물건이 지금 어떤 상태인가 — 낙찰 · 불허 · 종결.
+ * 조원 RPC 가 2026-08-31 에 win_*·approval·end_* 를 주기 시작했다.
+ * 이걸 안 쓰면 **이미 팔린 물건을 진행 중인 것처럼** 보여주게 된다.
+ */
+function statusOf(i: CaseDetail['item']) {
+  const won = i.win_date
+    ? <><b>{i.win_round}회차({i.win_date})</b> 낙찰가 <b>{nf(i.win_price ?? 0)}원</b>
+        {i.win_bidders != null && <> · 응찰 {i.win_bidders}명</>}</>
+    : null
+  const appr = i.approval === '불허' ? <><b>매각불허가</b> 결정이 기록됐습니다.</>
+    : i.approval === '미결' ? <>매각허가 여부는 <b>미결</b>로 기록돼 있습니다.</>
+    : i.approval === '허가' ? <><b>매각허가</b> 결정이 기록됐습니다.</> : null
+
+  if (i.end_reason) {
+    return {
+      badge: i.end_reason, stop: i.end_reason !== '종결', title: i.end_reason,
+      msg: won
+        ? <>{won}으로 매각됐습니다. {appr && <>{appr} 이후 </>}<b>{i.end_date}</b>에 <b>{i.end_reason}</b>로 기록됐습니다.</>
+        : <>기준일까지 매각 기록이 없고, <b>{i.end_date}</b>에 <b>{i.end_reason}</b>로 기록됐습니다.</>,
+    }
+  }
+  if (i.win_date) {
+    const bad = i.approval === '불허' || i.approval === '미결'
+    return {
+      badge: i.approval === '불허' ? '불허' : i.approval === '미결' ? '미결' : '매각',
+      stop: bad,
+      title: i.approval === '불허' ? '매각불허가' : i.approval === '미결' ? '허가 미결' : '매각',
+      msg: <>{won}으로 매각됐습니다.{appr && <> {appr}</>}{i.paid && <> 대금 납부가 기록돼 있습니다.</>}</>,
+    }
+  }
+  return null
+}
+
 export function Sec1({ d }: { d: CaseDetail }) {
   const i = d.item, R = d.rounds ?? []
   const ratio = (i.min_price / i.appraisal * 100).toFixed(1)
   const dd = i.due ? Math.round((new Date(i.due).getTime() - new Date(ASOF).getTime()) / 864e5) : null
-  const ddTxt = dd === null ? '' : dd > 0 ? `D-${dd}` : dd === 0 ? 'D-DAY' : '종료'
+  const st = statusOf(i)
+  const ddTxt = st ? st.badge
+    : i.est ? '미공고'
+    : dd === null ? '기일 미정'
+    : dd > 0 ? `D-${dd}` : dd === 0 ? 'D-DAY' : '종료'
   const shown = R.filter((r) => r.res || r.r <= i.round + 1).slice().reverse()
   const flags = (i.flags ?? '').split(' · ').filter(Boolean)
   return (
@@ -46,7 +97,8 @@ export function Sec1({ d }: { d: CaseDetail }) {
       <Row>
         <Cell keyed label="매각기일 최저가" value={nf(i.min_price)} unit="원" note={<>감정가 대비 {ratio}%</>} />
         <Cell label="용도" value={i.house_type ?? '—'} note="주거용" />
-        <Cell keyed label="매각기일" value={i.due ?? '—'} note={<>{i.round}회차 <span className="dd">{ddTxt}</span></>} />
+        <Cell keyed label="매각기일" value={i.due ?? (i.est ? '미정' : '—')}
+          note={<>{i.round}회차 <span className={`dd${st?.stop ? ' stop' : ''}`}>{ddTxt}</span></>} />
       </Row>
       <Row>
         <Cell label="감정가" value={nf(i.appraisal)} unit="원" note={<>감정일 {i.appraisal_date ?? '—'}</>}>
@@ -59,6 +111,13 @@ export function Sec1({ d }: { d: CaseDetail }) {
           <div className="sub-split"><div>청구금액<b>{nf(i.claim)} <span className="u2">원</span></b><span className="tiny">감정가의 {(i.claim / i.appraisal * 100).toFixed(1)}%</span></div></div>
         </Cell>
       </Row>
+      {st && <Read tone={st.stop ? 'warn' : undefined} title={st.title}>{st.msg}</Read>}
+      {i.est && (
+        <Read title="추정">
+          기준일 시점에 <b>{i.round}회차</b> 기일은 아직 공고되지 않았습니다. 매각기일 공고는 기일 2주 전에 이뤄집니다.
+          최저가 <b>{nf(i.min_price)}원</b>은 직전 회차 최저가에 저감률 20%를 적용한 값입니다.
+        </Read>
+      )}
       <span className="lbl">회차 정보</span>
       <Rounds items={shown.map((r) => ({
         round: `${r.r}회차 · ${r.d ?? ''}`,
@@ -119,7 +178,7 @@ export function Sec2({ d, myBid }: { d: CaseDetail; myBid: number | null }) {
       </> : <NoData title={`${i.round}회차 낙찰 기록이 없습니다`} msg={`같은 조건 ${i.round}회차에서 팔린 건이 없어 낙찰가 분포를 그릴 수 없어요.`} />}
 
       {bd.length > 0 && <>
-        <Callout title={`10건 중 ${pd.n ? Math.round(solo / pd.n * 10) : 0}건은 혼자 들어가서 낙찰됐습니다`}>평균 응찰자 {pd.avg_bid || 0}명. 서울 평균 {si?.avg_bid ?? 0}명.</Callout>
+        <Callout title={bidLine(bd)}>평균 응찰자 {pd.avg_bid || 0}명. 서울 평균 {si?.avg_bid ?? 0}명.</Callout>
         <Pair chart={<Donut bd={bd} pd={pd} />} label="응찰자 수" lines={[
           <>{i.round}회차 <b>{pd.n}건</b> 기준이다.</>,
           <>단독 응찰이 <b>{solo}건({pd.solo || 0}%)</b>이다.</>,

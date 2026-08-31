@@ -21,6 +21,24 @@ export interface CaseItem {
   min_price: number; round: number; due: string | null
   debt: number; claim: number; flags: string | null
   ar_lo: number; ar_hi: number; band_lo: number; band_hi: number
+
+  // ── 2026-08-31 조원 RPC 추가분 ──────────────────────────────
+  /** 최저가가 추정값인가. 기준일 시점에 이 회차 기일이 아직 공고되지 않았다는 뜻 */
+  est: boolean
+  /** 아직 진행 예정인가 */
+  upcoming: boolean
+  sold: boolean
+  /** '허가' · '불허' · '미결' */
+  approval: string | null
+  /** 대금 납부 기록 */
+  paid: boolean
+  closed: boolean
+  end_date: string | null
+  end_reason: string | null
+  win_price: number | null
+  win_date: string | null
+  win_round: number | null
+  win_bidders: number | null
 }
 
 export interface RoundRow { r: number; d: string | null; p: number; res: string | null }
